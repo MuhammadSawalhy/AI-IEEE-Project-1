@@ -23,8 +23,8 @@ def examples():
     file.write(
         "\n\n##########################################################################################")
     file.close()
-    print(_file_.replace("getting_info.py", "examples.txt"))
+    print(__file__.replace("getting_info.py", "user_manual.txt"))
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     examples()
