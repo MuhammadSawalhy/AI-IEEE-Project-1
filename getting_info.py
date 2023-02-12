@@ -23,6 +23,7 @@ def examples():
     file.write(
         "\n\n##########################################################################################")
     file.close()
+    print("The path of the file is : ",end=(" "))
     print(__file__.replace("getting_info.py", "user_manual.txt"))
 
 
