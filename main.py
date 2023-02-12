@@ -27,9 +27,10 @@ def gauss_jordan_elimination(equations: list[list[int]]):
     non_zero = [-1] * n
     for i in range(n):
         eq = equations[i]
-        assert len(eq) == n + 1, "row length must equals no. of unkowns + 1"
-        for j in eq:
-            if j != 0:
+        if len(eq) != n + 1:
+            return { "type": soltype.none }
+        for j in range(len(eq) - 1):
+            if eq[j] != 0:
                 non_zero[j] = i
 
     for i in range(n):
@@ -47,18 +48,26 @@ def gauss_jordan_elimination(equations: list[list[int]]):
             add_rows(equations[j], equations[i], equations[i][i], -equations[j][i])
 
     values = [0.0] * n
+    
+    is_solvable = True
     for i in range(n):
-        if equations[i][i] == 0:
+        if equations[i][i] == 0 and equations[i][n] == 0:
             return {"type": soltype.infinite}
+        if equations[i][i] == 0:
+            is_solvable = False
+            continue
         values[i] = equations[i][n] / equations[i][i]
+
+    if not is_solvable:
+        return { "type": soltype.none }
 
     return {"type": soltype.only_one, "values": values}
 
 
 if __name__ == "__main__":
     eqs = [
-        [1, 1, 1],
-        [0, 1, 1],
+        [2, 1, 1],
+        [2, 0, 1],
     ]
     ans = gauss_jordan_elimination(eqs)
     print(ans)
