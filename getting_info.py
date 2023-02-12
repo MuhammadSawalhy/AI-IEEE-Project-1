@@ -21,7 +21,7 @@ def examples():
 
         file.write(f"a{i}0".translate(sub))
     file.write(
-        "\n\n##########################################################################################")
+        "\n\n###########################################################################################")
     file.close()
     print("The path of the file is : ",end=(" "))
     print(__file__.replace("getting_info.py", "user_manual.txt"))
