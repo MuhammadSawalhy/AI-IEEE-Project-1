@@ -129,3 +129,4 @@ if __name__ == "__main__":
     ]
     ans = gauss_jordan_elimination(eqs)
     print(ans)
+

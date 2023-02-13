@@ -95,3 +95,4 @@ def getting_equations():
 
 if __name__ == "__main__":
     pass
+
