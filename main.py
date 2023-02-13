@@ -1,3 +1,6 @@
+from getting_info import getting_equations
+
+
 class soltype:
     none = 0
     only_one = 1
@@ -65,68 +68,26 @@ def gauss_jordan_elimination(equations: list[list[int]]):
     return {"type": soltype.only_one, "values": values}
 
 
-# if __name__ == "__main__":
-#     # # infinite number of solutions
-#     # eqs = [
-#     #     [1, 0, 0],
-#     #     [2, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution exists
-#     # eqs = [
-#     #     [1, 0, 1],
-#     #     [2, 0, 1],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution
-#     # eqs = [
-#     #     [1, 1, 1, 1],
-#     #     [1, 1, 1, 2],
-#     #     [0, 0, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution
-#     # eqs = [
-#     #     [1, 0, 0, 1],
-#     #     [1, 0, 0, 2],
-#     #     [0, 0, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-
-
-def main():
-    # =======================================================================
-    # Writing subscripts into files
-    # option 1:
-    # \u0x208N for numbers, +, -, =, (, ) (N goes from 0 to F)
-    # \u0x209N for letters
-    # ex: print(u'H\u2082O\u2082')    >> H₂O₂
-    # option 2:
-    # using str.maketrans(), translate() methods
-    # =======================================================================
-    solution = gauss_jordan_elimination()
-    file_solution = open("solution.txt", "w", encoding="utf-8")
+def main(solution):
+    filepath = __file__.replace("main.py", "solution.txt")
+    file = open(filepath, "w", encoding="utf-8")
+    SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
     if solution["type"] == 1:  # one solution
-        file_solution.write("There is one solution\n")
+        assert isinstance(solution["values"], list)
+        file.write("There is one solution\n")
         for i, ans in enumerate(solution["values"]):
-            string = 'X'+f"{i}"
-            SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-            file_solution.write(
-                f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
+            string = 'x' + str(i)
+            file.write(f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
     elif solution["type"] == 2:  # infinite solution
-        file_solution.write("There is infinite solution\n")
+        file.write("There is infinite solution\n")
     elif solution["type"] == 0:  # no solution
-        file_solution.write("There is no solution\n")
-    file_solution.close()
+        file.write("There is no solution\n")
+    file.close()
     # __file__ print path of of main.py which is the same as solution.txt
-    print(__file__.replace("main.py", "solution.txt"))
+    print(filepath)
 
 
 if __name__ == "__main__":
-    eqs = [
-        [3, 4, 12],
-        [6, 8, 24],
-    ]
-    ans = gauss_jordan_elimination(eqs)
-    print(ans)
-
+    equations = getting_equations()
+    solution = gauss_jordan_elimination(equations)
+    main(equations)
