@@ -1,3 +1,6 @@
+from getting_info import getting_equations
+
+
 class soltype:
     none = 0
     only_one = 1
@@ -13,7 +16,7 @@ def add_rows(first, second, a, b):
         first[i] = a * first[i] + b * second[i]
 
 
-def gauss_jordan_elimination(equations: list[list[int]]):
+def gauss_jordan_elimination(equations):
     """
     solve system of equations using Gauss-Jordan elimination method
     time complexity: O(n^3)
@@ -41,21 +44,26 @@ def gauss_jordan_elimination(equations: list[list[int]]):
             continue
         add_rows(equations[i], equations[non_zero[i]], 1, 1)
 
-    for i in range(n):
+    for i in range(n): # for each number in the diagonal
         for j in range(n):
             if i == j or equations[i][i] == 0:
                 continue
             add_rows(equations[j], equations[i],
                      equations[i][i], -equations[j][i])
 
+    # if there exists a solution, we will have the main diagonal with no zeros
+
     values = [0.0] * n
 
     is_infinite = False
     for i in range(n):
         if equations[i][i] == 0 and equations[i][n] == 0:
+            # 0/0 can be any value using limit (it is indeterminate)
             is_infinite = True
             continue
         if equations[i][i] == 0:
+            # 0 = -6?
+            # -6/0 is -infinity which indicates no solution
             return {"type": soltype.none}
         values[i] = equations[i][n] / equations[i][i]
 
@@ -65,67 +73,29 @@ def gauss_jordan_elimination(equations: list[list[int]]):
     return {"type": soltype.only_one, "values": values}
 
 
-# if __name__ == "__main__":
-#     # # infinite number of solutions
-#     # eqs = [
-#     #     [1, 0, 0],
-#     #     [2, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution exists
-#     # eqs = [
-#     #     [1, 0, 1],
-#     #     [2, 0, 1],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution
-#     # eqs = [
-#     #     [1, 1, 1, 1],
-#     #     [1, 1, 1, 2],
-#     #     [0, 0, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-#     # # no solution
-#     # eqs = [
-#     #     [1, 0, 0, 1],
-#     #     [1, 0, 0, 2],
-#     #     [0, 0, 0, 0],
-#     # ]
-#     # print(gauss_jordan_elimination(eqs))
-
-
-def main():
-    # =======================================================================
-    # Writing subscripts into files
-    # option 1:
-    # \u0x208N for numbers, +, -, =, (, ) (N goes from 0 to F)
-    # \u0x209N for letters
-    # ex: print(u'H\u2082O\u2082')    >> H₂O₂
-    # option 2:
-    # using str.maketrans(), translate() methods
-    # =======================================================================
-    solution = gauss_jordan_elimination()
-    file_solution = open("solution.txt", "w", encoding="utf-8")
+def main(solution):
+    filepath = __file__.replace("main.py", "solution.txt")
+    file = open(filepath, "w", encoding="utf-8")
+    SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
     if solution["type"] == 1:  # one solution
-        file_solution.write("There is one solution\n")
+        assert isinstance(solution["values"], list)
+        file.write("There is one solution:\n\n")
         for i, ans in enumerate(solution["values"]):
-            string = 'X'+f"{i}"
-            SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-            file_solution.write(
-                f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
+            string = 'x' + str(i + 1)
+            file.write(f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
     elif solution["type"] == 2:  # infinite solution
-        file_solution.write("There is infinite solution\n")
+        file.write("There is infinite solution\n")
     elif solution["type"] == 0:  # no solution
-        file_solution.write("There is no solution\n")
-    file_solution.close()
+        file.write("There is no solution\n")
+    file.close()
     # __file__ print path of of main.py which is the same as solution.txt
-    print(__file__.replace("main.py", "solution.txt"))
+    print(filepath)
 
 
 if __name__ == "__main__":
-    eqs = [
-        [3, 4, 12],
-        [6, 8, 24],
-    ]
-    ans = gauss_jordan_elimination(eqs)
-    print(ans)
+    equations = getting_equations()
+    if(equations == None):
+        print("No solution")
+        exit()
+    solution = gauss_jordan_elimination(equations)
+    main(solution)

@@ -1,1 +1,4 @@
-
+There is one solution
+X₀ = -2.0
+X₁ = -1.0
+X₂ = -13.0
