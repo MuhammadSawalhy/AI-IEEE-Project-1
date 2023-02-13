@@ -44,21 +44,26 @@ def gauss_jordan_elimination(equations):
             continue
         add_rows(equations[i], equations[non_zero[i]], 1, 1)
 
-    for i in range(n):
+    for i in range(n): # for each number in the diagonal
         for j in range(n):
             if i == j or equations[i][i] == 0:
                 continue
             add_rows(equations[j], equations[i],
                      equations[i][i], -equations[j][i])
 
+    # if there exists a solution, we will have the main diagonal with no zeros
+
     values = [0.0] * n
 
     is_infinite = False
     for i in range(n):
         if equations[i][i] == 0 and equations[i][n] == 0:
+            # 0/0 can be any value using limit (it is indeterminate)
             is_infinite = True
             continue
         if equations[i][i] == 0:
+            # 0 = -6?
+            # -6/0 is -infinity which indicates no solution
             return {"type": soltype.none}
         values[i] = equations[i][n] / equations[i][i]
 
