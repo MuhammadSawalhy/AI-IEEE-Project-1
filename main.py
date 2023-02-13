@@ -37,18 +37,18 @@ def gauss_jordan_elimination(equations: list[list[int]]):
         if equations[i][i] != 0:
             continue
         if non_zero[i] == -1:
-            # can't find a row with non-zero i-th element
-            return {"type": soltype.none}
+            # either no solutions or infinite number of them
+            continue
         add_rows(equations[i], equations[non_zero[i]], 1, 1)
 
     for i in range(n):
         for j in range(n):
-            if i == j:
+            if i == j or equations[i][i] == 0:
                 continue
             add_rows(equations[j], equations[i], equations[i][i], -equations[j][i])
 
     values = [0.0] * n
-    
+
     is_solvable = True
     for i in range(n):
         if equations[i][i] == 0 and equations[i][n] == 0:
@@ -65,9 +65,15 @@ def gauss_jordan_elimination(equations: list[list[int]]):
 
 
 if __name__ == "__main__":
+    # infinite number of solutions
     eqs = [
-        [2, 1, 1],
+        [1, 0, 0],
+        [2, 0, 0],
+    ]
+    print(gauss_jordan_elimination(eqs))
+    # no solution exists
+    eqs = [
+        [1, 0, 1],
         [2, 0, 1],
     ]
-    ans = gauss_jordan_elimination(eqs)
-    print(ans)
+    print(gauss_jordan_elimination(eqs))
