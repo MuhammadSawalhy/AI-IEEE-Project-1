@@ -49,8 +49,6 @@ def gauss_jordan_elimination(equations: list[list[int]]):
 
     values = [0.0] * n
 
-    print(equations)
-
     is_infinite = False
     for i in range(n):
         if equations[i][i] == 0 and equations[i][n] == 0:
