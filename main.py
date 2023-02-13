@@ -49,17 +49,19 @@ def gauss_jordan_elimination(equations: list[list[int]]):
 
     values = [0.0] * n
 
-    is_solvable = True
+    print(equations)
+
+    is_infinite = False
     for i in range(n):
         if equations[i][i] == 0 and equations[i][n] == 0:
-            return {"type": soltype.infinite}
-        if equations[i][i] == 0:
-            is_solvable = False
+            is_infinite = True
             continue
+        if equations[i][i] == 0:
+            return {"type": soltype.none}
         values[i] = equations[i][n] / equations[i][i]
 
-    if not is_solvable:
-        return { "type": soltype.none }
+    if is_infinite:
+        return {"type": soltype.infinite}
 
     return {"type": soltype.only_one, "values": values}
 
@@ -75,5 +77,19 @@ if __name__ == "__main__":
     eqs = [
         [1, 0, 1],
         [2, 0, 1],
+    ]
+    print(gauss_jordan_elimination(eqs))
+    # no solution
+    eqs = [
+        [1, 1, 1, 1],
+        [1, 1, 1, 2],
+        [0, 0, 0, 0],
+    ]
+    print(gauss_jordan_elimination(eqs))
+    # no solution
+    eqs = [
+        [1, 0, 0, 1],
+        [1, 0, 0, 2],
+        [0, 0, 0, 0],
     ]
     print(gauss_jordan_elimination(eqs))
