@@ -16,7 +16,7 @@ def add_rows(first, second, a, b):
         first[i] = a * first[i] + b * second[i]
 
 
-def gauss_jordan_elimination(equations: list[list[int]]):
+def gauss_jordan_elimination(equations):
     """
     solve system of equations using Gauss-Jordan elimination method
     time complexity: O(n^3)
@@ -74,9 +74,9 @@ def main(solution):
     SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
     if solution["type"] == 1:  # one solution
         assert isinstance(solution["values"], list)
-        file.write("There is one solution\n")
+        file.write("There is one solution:\n\n")
         for i, ans in enumerate(solution["values"]):
-            string = 'x' + str(i)
+            string = 'x' + str(i + 1)
             file.write(f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
     elif solution["type"] == 2:  # infinite solution
         file.write("There is infinite solution\n")
@@ -90,4 +90,4 @@ def main(solution):
 if __name__ == "__main__":
     equations = getting_equations()
     solution = gauss_jordan_elimination(equations)
-    main(equations)
+    main(solution)
