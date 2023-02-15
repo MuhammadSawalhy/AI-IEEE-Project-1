@@ -2,7 +2,13 @@ from os import path
 
 def examples():
     sub = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-    eq = int(input("Please enter the number of equation to be solved : "))
+    try:
+        eq = int(input("Please enter the number of equation to be solved (n > 1): "))
+    except:
+        return
+    if eq < 2:
+        print("Number of equations must be greater than 1")
+        return
     file = open("user_manual.txt", 'w', encoding="utf-8")
     file.write("This file is your catalogue to use this program.\n\n")
     file.write(
@@ -26,6 +32,7 @@ def examples():
         "\n\n##########################################################################################")
     file.close()
     print(__file__.replace("getting_info.py", "user_manual.txt"))
+    return True
 
 
 def getting_equations():
@@ -37,7 +44,7 @@ def getting_equations():
     # use utf-8 encoding to use subscript numbers
     file = open(equations_file, 'r', encoding="utf-8")
     line1 = file.readline()
-    no_eqs = int(line1.split(":")[1].strip())
+    eqs_number = int(line1.split(":")[1].strip())
     lines = file.readlines()
     file.close()
 
@@ -45,8 +52,7 @@ def getting_equations():
     SUB = str.maketrans("₀₁₂₃₄₅₆₇₈₉", "0123456789")
     for line in lines:
 
-        equation = []
-        args = {}
+        equation = [0] * (eqs_number + 1)
         # eq1: 1x₁ 3x₂ -7x₃ 0
         data = line.split(":")[1].replace(" ", "")
         data = data.replace("+", " ")
@@ -55,29 +61,15 @@ def getting_equations():
         data = data.split()
         # ['1x₁', '3x₂', '-7x₃', '0']
 
-        d = int(data[-1]) # = 0
-        for var in data[0:-1]:
-            x = var.translate(SUB)
-            equation.append(x)
+        equation[-1] = int(data[-1])
+        data = [x.translate(SUB) for x in data[:-1]]
         # ['1x1', '3x2', '-7x3']
 
-        for value in equation:
-            args[int(value.split("x")[1])] = int(value.split("x")[0])
-        # { 1: 1, 2: 3, 3: -7 }
+        for value in data:
+            v, i = value.split("x")
+            equation[int(i) - 1] = int(v)
 
-        # solving problem of removed variables ex: 1x1 + 3x2 = 0
-        if len(equation) < no_eqs:
-            for i in range(1, no_eqs+1):
-                if i not in args:
-                    args[i] = 0
-
-        # order keyes in dictionary
-        args = {k: args[k] for k in sorted(args)}
-        equations.append([*args.values(), d])
+        equations.append(equation)
 
     return equations
-
-
-if __name__ == "__main__":
-    print(getting_equations())
 

@@ -1,4 +1,4 @@
-from getting_info import getting_equations
+from getting_info import getting_equations, examples
 
 
 class soltype:
@@ -14,6 +14,14 @@ def add_rows(first, second, a, b):
     assert len(first) == len(second), "row lengths must be the same"
     for i in range(len(first)):
         first[i] = a * first[i] + b * second[i]
+
+
+def fix_row(equations, i):
+    """
+    when i-th row in equations contains 0 in the main diagonal (equations[i][i])
+    this function will try to fix this row by using any other none zero
+    """
+    pass
 
 
 def gauss_jordan_elimination(equations):
@@ -45,8 +53,11 @@ def gauss_jordan_elimination(equations):
         add_rows(equations[i], equations[non_zero[i]], 1, 1)
 
     for i in range(n): # for each number in the diagonal
+        if equations[i][i] == 0:
+            continue
+            fix_row(equations, i)
         for j in range(n):
-            if i == j or equations[i][i] == 0:
+            if i == j:
                 continue
             add_rows(equations[j], equations[i],
                      equations[i][i], -equations[j][i])
@@ -73,26 +84,44 @@ def gauss_jordan_elimination(equations):
     return {"type": soltype.only_one, "values": values}
 
 
-def main(solution):
+def main():
+    if not examples():
+        return
+
+    print()
+    try:
+        ans = input("Please follow instruction in user_manual.txt, type (y/Y) to continue: ")
+        if ans.strip().lower() != 'y':
+            return
+    except:
+        return
+
+    equations = getting_equations()
+    if not equations:
+        print("Solution file is not generated")
+        return
+
+    solution = gauss_jordan_elimination(equations)
     filepath = __file__.replace("main.py", "solution.txt")
     file = open(filepath, "w", encoding="utf-8")
     SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-    if solution["type"] == 1:  # one solution
+
+    if solution["type"] == soltype.none:
+        file.write("There is no solution\n")
+    elif solution["type"] == soltype.infinite:
+        file.write("There is infinite solution\n")
+    elif solution["type"] == soltype.only_one:
         assert isinstance(solution["values"], list)
         file.write("There is one solution:\n\n")
         for i, ans in enumerate(solution["values"]):
             string = 'x' + str(i + 1)
             file.write(f"{string.translate(SUB)}" + " = " + str(ans)+"\n")
-    elif solution["type"] == 2:  # infinite solution
-        file.write("There is infinite solution\n")
-    elif solution["type"] == 0:  # no solution
-        file.write("There is no solution\n")
+
     file.close()
-    # __file__ print path of of main.py which is the same as solution.txt
+    print("Solution file in generated at:")
     print(filepath)
 
 
 if __name__ == "__main__":
-    equations = getting_equations()
-    solution = gauss_jordan_elimination(equations)
-    main(solution)
+    main()
+
