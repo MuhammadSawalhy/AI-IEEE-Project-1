@@ -1,4 +1,4 @@
-# AI-IEEE-Project-1
+# Gauss-Jordan Elimination
 
 Solve system of equations using Gauss-Jordan elimination method (reduced row echelon form).
 
