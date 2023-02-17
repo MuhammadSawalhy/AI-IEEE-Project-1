@@ -16,12 +16,46 @@ def add_rows(first, second, a, b):
         first[i] = a * first[i] + b * second[i]
 
 
-def fix_row(equations, i):
-    """
-    when i-th row in equations contains 0 in the main diagonal (equations[i][i])
-    this function will try to fix this row by using any other none zero
-    """
-    pass
+def non_zero_cell(equations, r, col):
+    i, n = r, len(equations)
+    while equations[i][col] == 0:
+        i += 1
+        if i < n:
+            continue
+        i = r
+        col += 1
+        if col == n:
+            return -1, -1
+    return i, col
+
+
+def reduced_row_echlon(equations):
+    vars_order = []
+    n = len(equations)
+
+    r = 0
+    col = 0
+    while r < n and col < n:
+        i, col = non_zero_cell(equations, r, col)
+
+        if col == -1:
+            break
+
+        vars_order.append(col)
+
+        # swap rows
+        equations[i], equations[r] = equations[r], equations[i]
+
+        for j in range(n):
+            if j == r:
+                continue
+            add_rows(equations[j], equations[r],
+                     equations[r][col], -equations[j][col])
+
+        r += 1
+        col += 1
+
+    return vars_order
 
 
 def gauss_jordan_elimination(equations):
@@ -31,55 +65,21 @@ def gauss_jordan_elimination(equations):
     """
 
     n = len(equations)
-
-    # when an equation have a₁₂ = 0, this equation can be used to
-    # get the value of x₂, hence it can't be at the 2nd row
-    # to fix the i-th row we need to add any row with non-zero value
-    non_zero = [-1] * n
-    for i in range(n):
-        eq = equations[i]
-        if len(eq) != n + 1:
-            return {"type": soltype.none}
-        for j in range(len(eq) - 1):
-            if eq[j] != 0:
-                non_zero[j] = i
-
-    for i in range(n):
-        if equations[i][i] != 0:
-            continue
-        if non_zero[i] == -1:
-            # either no solutions or infinite number of them
-            continue
-        add_rows(equations[i], equations[non_zero[i]], 1, 1)
-
-    for i in range(n): # for each number in the diagonal
-        if equations[i][i] == 0:
-            continue
-            fix_row(equations, i)
-        for j in range(n):
-            if i == j:
-                continue
-            add_rows(equations[j], equations[i],
-                     equations[i][i], -equations[j][i])
-
-    # if there exists a solution, we will have the main diagonal with no zeros
+    vars_order = reduced_row_echlon(equations)
 
     values = [0.0] * n
 
-    is_infinite = False
-    for i in range(n):
-        if equations[i][i] == 0 and equations[i][n] == 0:
-            # 0/0 can be any value using limit (it is indeterminate)
-            is_infinite = True
-            continue
-        if equations[i][i] == 0:
-            # 0 = -6?
-            # -6/0 is -infinity which indicates no solution
-            return {"type": soltype.none}
-        values[i] = equations[i][n] / equations[i][i]
-
-    if is_infinite:
+    if len(vars_order) != n:
+        for i in range(len(vars_order), n):
+            if equations[i][i] == 0 and equations[i][n] != 0:
+                # 0 = -6?
+                # -6/0 is -infinity which indicates no solution
+                return {"type": soltype.none}
         return {"type": soltype.infinite}
+
+    # all rows are good
+    for i in range(n):
+        values[i] = equations[i][n] / equations[i][i]
 
     return {"type": soltype.only_one, "values": values}
 
@@ -90,7 +90,8 @@ def main():
 
     print()
     try:
-        ans = input("Please follow instruction in user_manual.txt, type (y/Y) to continue: ")
+        ans = input(
+            "Please follow instruction in user_manual.txt, type (y/Y) to continue: ")
         if ans.strip().lower() != 'y':
             return
     except:
@@ -124,4 +125,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
